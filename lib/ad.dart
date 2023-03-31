@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AD extends StatelessWidget {
-  const AD(this.index, {Key? key}) : super(key: key);
+class Ad extends StatelessWidget {
+  const Ad(this.index, {Key? key}) : super(key: key);
 
   final int index;
 
