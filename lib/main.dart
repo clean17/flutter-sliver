@@ -27,37 +27,67 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            snap: true,
-            // floating과 함께 사용 조금만 아래로 터치하면 앱바가 전부 내려온다.
-            floating: true,
-            title: Text("SliverAppBar"),
-            pinned: false,
-            // 상단 앱바를 스크롤 내릴때만 나타나게
-            expandedHeight: 250,
-            // 내리면 어디까지 정보를 나타낼지 적용 ->flexible space
-            // flexibleSpace: Container(
-            //   child: Center(
-            //       child:
-            //           // Image(image: AssetImage("assets/다운로드 (1).jpg"))
-            //           Image.network("https://picsum.photos/200/300",
-            //               fit: BoxFit.cover)),
-            // ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text("제목"),
-              centerTitle: true,
-              background: Image.network(
-                'https://picsum.photos/200/300',
-                fit: BoxFit.cover,
+          // SliverAppBar(
+          //   snap: true,
+          //   // floating과 함께 사용 조금만 아래로 터치하면 앱바가 전부 내려온다.
+          //   floating: true,
+          //   title: Text("SliverAppBar"),
+          //   pinned: false,
+          //   // 상단 앱바를 스크롤 내릴때만 나타나게
+          //   expandedHeight: 250,
+          //   // 내리면 어디까지 정보를 나타낼지 적용 ->flexible space
+          //   // flexibleSpace: Container(
+          //   //   child: Center(
+          //   //       child:
+          //   //           // Image(image: AssetImage("assets/다운로드 (1).jpg"))
+          //   //           Image.network("https://picsum.photos/200/300",
+          //   //               fit: BoxFit.cover)),
+          //   // ),
+          //   flexibleSpace: FlexibleSpaceBar(
+          //     title: Text("제목"),
+          //     centerTitle: true,
+          //     background: Image.network(
+          //       'https://picsum.photos/200/300',
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          //   centerTitle: true,
+          // ),
+
+          // const SliverAppBar(
+          //   title: Text("pinned"),
+          //   pinned: true, // 상단 앱바를 스크롤 내릴때만 나타나게
+          //   centerTitle: true,
+          // ),
+          SliverPersistentHeader(
+            pinned: true,
+            floating : true,
+            delegate: MySliverPersistentHeaderDelegate(
+              minHeight: 50.0,
+              maxHeight: 250.0,
+              child: Container(
+                color: Colors.blue[300],
+                child: const Center(
+                  child: Text(
+                    'SliverPersistentHeader',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ),
               ),
             ),
-            centerTitle: true,
           ),
-          const SliverAppBar(
-            title: Text("pinned"),
-            pinned: true, // 상단 앱바를 스크롤 내릴때만 나타나게
-            centerTitle: true,
-          ),
+
+
+
+          // SliverList(
+          //   delegate: SliverChildBuilderDelegate(
+          //     (BuildContext context, int index) {
+          //       return ListTile(title: Text('Item $index'));
+          //     },
+          //     childCount: 50,
+          //   ),
+          // ),
+
           // SliverGrid(
           //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           //     crossAxisCount: 2,
@@ -93,7 +123,6 @@ class HomePage extends StatelessWidget {
           //     },
           //   ),
           // ),
-
 
           SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -178,5 +207,36 @@ class HomePage extends StatelessWidget {
         );
       },
     ));
+  }
+}
+
+class MySliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
+  MySliverPersistentHeaderDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  double get maxExtent => maxHeight; // 스크롤 내려서 가장 위로 올라갔을때 최대로 늘어나는 길이
+
+  @override
+  double get minExtent => minHeight; // 최소크기 / pinned: true 일때만 유효
+
+  @override
+  bool shouldRebuild(covariant MySliverPersistentHeaderDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }
